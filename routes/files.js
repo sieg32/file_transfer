@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer')
 const fs = require('fs/promises')
+const fs1 = require('fs')
 const router = express.Router();
 
 
@@ -27,24 +28,31 @@ dirn = dirn.slice(0,-7);
 
 router.get('/fetchList', (req,res)=>{
     current={};
+    fs1.readdir('upload/',(error,files)=>{
+        
+        files.forEach((file)=>{
+           const stat = fs1.statSync(dirn+'/upload/'+file);
+          
+            current[file] = (stat.size / (1024*1024)).toFixed(2);
+            
 
-    arr.forEach((value)=>{
-        current[value.originalname] = value.size;
+        })
+        res.setHeader('Content-Type','application/json');
+            res.end(JSON.stringify(current));
     })
-    res.type('json').send(JSON.stringify(current));
-    res.end;
+   
+    
     
 
 })
 
 router.delete('/clear',(req,res)=>{
-    arr.forEach((val)=>{
-        console.log('deleting ' + val.filename)
-        fs.unlink(dirn+'/upload/'+val.filename,(error)=>{
-            console.log(error)
-            
+    fs1.readdir('upload/',(error,files)=>{
+        files.forEach((file)=>{
+            console.log('deleting =>'+file);
+            fs.unlink(dirn+'/upload/'+file);
         })
-    })
+    });
     
     res.end('cleared');
 
@@ -63,15 +71,7 @@ router.get('/download', (req,res)=>{
 })
 
 router.post('/upload',upload.array('files'),async (req,res)=>{
-    const files = req.files;
-    
-    for(const file of files){
-        arr.push(file);
-    }
-
-    
-    //console.log(arr)
-    res.end('done');
+   
 })
 
 

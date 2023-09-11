@@ -4,6 +4,10 @@ const dropArea = document.getElementById('drop-area');
 const fileInput = document.getElementById('fileInput');
 const fileList = document.getElementById('file-list');
 const filebox = document.querySelector('.received-box');
+const clearBtn = document.querySelector('#clearBtn');
+let filecount =0;
+let storageUsage =0;
+let refreshed = 0;
 
 
 // Prevent default behavior for drag and drop events
@@ -35,7 +39,7 @@ dropArea.addEventListener('drop', (e) => {
 fileInput.addEventListener('change', () => {
     const files = fileInput.files;
     const formData = new FormData();
-    
+    refreshed =0;
    
    for(const file of files){
         console.log(file.name)
@@ -58,7 +62,7 @@ fileInput.addEventListener('change', () => {
         console.log('error ==', error)
     });
    
-
+   
    
 });
 
@@ -66,38 +70,66 @@ fileInput.addEventListener('change', () => {
 
 const refreshBtn = document.getElementById('refresh');
 refreshBtn.addEventListener('click', ()=>{
-  let data;
-    axios.get('/files/fetchList').then(
-        (response)=>{
-            data = response.data;
-          console.log(response);
-        }
 
-    );
-   
-   setTimeout(() => {
-    for(const key in data){
-        const elem = document.createElement('div');
-        const textbox = document.createElement('p');
-        textbox.textContent= key +"    :     " + data[key];
-        elem.appendChild(textbox);
-        const dicon = document.createElement('i');
-        dicon.classList.add("fa-solid");
-        dicon.classList.add("fa-download");
-        dicon.id = key;
-        elem.appendChild(dicon);
-        console.log(elem)
-        filebox.appendChild(elem);
-        dicon.addEventListener('click', (elem)=>{
-                fetchFile(elem.target.id)
-        })
-    }
-   
-    
-   }, 500);
-        
-    
-});
+    refreshview();
+}
+);
+
+
+refreshview = function(){
+
+  let data;
+  
+  axios.get('/files/fetchList').then(
+      (response)=>{
+          data = response.data;
+        console.log(response);
+      }
+
+  );
+  filebox.innerHTML="";
+ 
+ 
+ setTimeout(() => {
+  for(const key in data){
+      filecount++;
+      storageUsage = storageUsage+ (+(data[key]));
+      const elem = document.createElement('div');
+      const textbox = document.createElement('p');
+      textbox.textContent= key +": " + data[key]+ "MB" ;
+      elem.appendChild(textbox);
+      const dicon = document.createElement('i');
+      dicon.classList.add("fa-solid");
+      dicon.classList.add("fa-download");
+      dicon.id = key;
+      elem.appendChild(dicon);
+      console.log(elem)
+      filebox.appendChild(elem);
+      dicon.addEventListener('click', (elem)=>{
+              fetchFile(elem.target.id)
+      })
+  }
+  if(refreshed===0){
+      const infobox = document.querySelector('#info p');
+      infobox.textContent = "there are "+ filecount+" files consuming " + storageUsage + "MB";
+       
+      
+      clearBtn.classList.toggle('hidden');
+      
+     
+      refreshed=1;
+
+  }else{
+      window.alert('already refreshed');
+  }
+
+  
+ }, 500);
+      
+  
+}
+
+
 
 fetchFile = function(filename){
 
@@ -106,9 +138,18 @@ fetchFile = function(filename){
 
 }
 
-
+clearBtn.addEventListener('click', (event)=>{
+    console.log(clearing);
+    clearing();
+    filecount=0;
+    storageUsage=0;
+    refreshed = 0;
+    refreshview();
+});
 
 clearing = function(){
+    
+    console.log('cleared')
     axios.delete('/files/clear').then((response)=>{
         console.log(response)
     })
