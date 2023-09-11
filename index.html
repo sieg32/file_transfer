@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop File Upload</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/cd635a5268.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="drop-area" class="drop-area">
+        <p>Drag &amp; Drop files here or <input type="file" id="fileInput" multiple> <label for="fileInput">Browse</label></p>
+        <ul id="file-list"></ul>
+    </div>
+
+    <button id="refresh">refresh</button>
+    <div class="received-box">
+        <div class="placeholder-rec-item">
+            <p>downloadable items will be visible here</p>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
