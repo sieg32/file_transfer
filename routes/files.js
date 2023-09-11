@@ -61,11 +61,22 @@ router.delete('/clear',(req,res)=>{
 
 router.get('/download', (req,res)=>{
     console.log(req.query.name);
-    const filepath = dirn +'/upload/'+req.query.name;
+    let filename = req.query.name;
+    if(filename[0]==='.'){
+        filename = filename.slice(1,filename.length)
+    }
+    console.log(filename);
+    const filepath = dirn +'/upload/'+filename;
     console.log(filepath);
-    res.download(filepath,(err)=>{
-        console.log(err)
-    })
+    try{
+        
+        res.download(filepath,(err)=>{
+            console.log(err)
+        })
+    }catch(error){
+        console.log(error);
+        res.end('file not found ' + error);
+    }
     
     
 })

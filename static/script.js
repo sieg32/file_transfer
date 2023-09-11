@@ -114,7 +114,7 @@ refreshview = function(){
       infobox.textContent = "there are "+ filecount+" files consuming " + storageUsage + "MB";
        
       
-      clearBtn.classList.toggle('hidden');
+      
       
      
       refreshed=1;
